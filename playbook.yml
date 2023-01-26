@@ -1,0 +1,6 @@
+---
+- hosts: testing_server
+  remote_user: jenkins
+  roles:
+     - install postgresql
+     - creare directory
