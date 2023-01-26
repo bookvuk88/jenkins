@@ -1,0 +1,76 @@
+---
+  - name: install sudo packages
+    yum:
+      name: 'sudo'
+      state: present
+      update_cache: true
+      disable_gpg_check: yes
+    become_method: su
+
+  - name: install java11 packages
+    yum:
+      name: 'java-11-openjdk'
+      state: present
+      validate_certs: no
+      disable_gpg_check: yes
+    ignore_errors: true
+    become: yes
+
+  - name: set alternatives java 11
+    shell: alternatives --set java $(alternatives --list | grep java-11 | head -1 | awk '{ print $3 }')
+    ignore_errors: true
+    become: yes
+
+  - name: install frequently used packages
+    yum:
+      name: 'bc'
+      state: present
+      validate_certs: no
+      disable_gpg_check: yes
+    become: true
+
+  - name: YUM - install postgres packages
+    package:
+      name: ['postgresql','postgresql-server','postgresql-contrib','postgresql-jdbc','python2-psycopg2']
+      state: present
+      validate_certs: no
+      disable_gpg_check: yes
+    become: yes
+    #when: db_postgres_mode == 'standalone' and ansible_facts['distribution_major_version'] | int >= 8
+
+#  - name: YUM - install postgres packages
+#    package:
+#      name: ['postgresql','postgresql-jdbc','python-psycopg2']
+#      state: present
+#      validate_certs: no
+#      disable_gpg_check: yes
+#    become: yes
+#    when: db_postgres_mode == 'external_postgres'
+#    ignore_errors: true
+
+  - name: YUM - install logrotate package
+    package:
+      name: 'logrotate'
+      state: present
+      validate_certs: no
+      disable_gpg_check: yes
+    become: yes
+
+  - name: Create data directory
+    file:
+      path: "{{  data_dir  }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    become: yes
+
+  - name: Create kms data directory
+    file:
+      path: "{{  data_dir_kms  }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    become: yes
+
