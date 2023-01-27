@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Install postgresql and create directory') {
                     steps {
-                        sh 'ansible-playbook -i hosts playbook.yml'
+                        ansiblePlaybook installation: 'Ansible', inventory: 'hosts', playbook: 'playbook.yml'
                         }
                     }
                  
